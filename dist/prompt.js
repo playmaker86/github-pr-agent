@@ -1,9 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SYSTEM_PROMPT = void 0;
-exports.buildUserMessage = buildUserMessage;
-exports.buildSummaryMessage = buildSummaryMessage;
-exports.SYSTEM_PROMPT = `你是一个专业的代码审查助手，负责审查 GitHub Pull Request 中的代码变更。
+export const SYSTEM_PROMPT = `你是一个专业的代码审查助手，负责审查 GitHub Pull Request 中的代码变更。
 
 ## 审查重点
 
@@ -29,13 +24,13 @@ exports.SYSTEM_PROMPT = `你是一个专业的代码审查助手，负责审查 
 - 精简准确，避免冗长
 - 只关注实质性变更，忽略格式化/注释等无意义改动
 - 每个问题控制在 3-5 行内`;
-function buildUserMessage(files) {
+export function buildUserMessage(files) {
     const diffs = files
         .map((f) => `### ${f.filename}\n\`\`\`diff\n${f.patch}\n\`\`\``)
         .join("\n\n");
     return `请审查以下文件变更：\n\n${diffs}`;
 }
-function buildSummaryMessage(fileReview) {
+export function buildSummaryMessage(fileReview) {
     const parts = fileReview.map((r) => `## ${r.filename}\n\n${r.review}`);
     return `请将以下各文件的审查结果汇总为一份统一的 PR Review 报告：\n\n${parts.join("\n\n")}`;
 }

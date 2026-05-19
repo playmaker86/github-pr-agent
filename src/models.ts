@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { SYSTEM_PROMPT, buildUserMessage, buildSummaryMessage } from "./prompt";
+import { SYSTEM_PROMPT, buildUserMessage, buildSummaryMessage } from "./prompt.js";
 
 const ENDPOINT = "https://models.inference.ai.azure.com";
 const MAX_CHARS_PER_BATCH = 15000;

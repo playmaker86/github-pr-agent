@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
-import { getPRFiles, postComment } from "./github";
-import { reviewFiles, summarizeReviews } from "./models";
+import { getPRFiles, postComment } from "./github.js";
+import { reviewFiles, summarizeReviews } from "./models.js";
 
 async function run(): Promise<void> {
   try {
