@@ -6,7 +6,7 @@ GitHub Action，使用 GitHub Models (gpt-4o-mini) 对 Pull Request 进行 AI �
 
 | 命令 | 作用 |
 |------|------|
-| `npm run build` | `tsc`，编译 `src/` → `dist/` |
+| `npm run build` | `tsc --noEmit` 类型检查 + `ncc` 打包 `src/` → `dist/index.js`（单文件） |
 
 ## 结构
 
@@ -27,7 +27,8 @@ PR 触发 → 获取 diff → 按文件分批审查 → 汇总 → 发布评论
 
 ## 注意
 
-- `dist/` 必须提交到仓库（GitHub Action 入口），不要加入 .gitignore
+- `dist/` 必须提交到仓库（GitHub Action 入口），不要加入 .gitignore。 `dist/` 由 ncc 生成，是包含所有依赖的自包含单文件
+- 项目使用 ESM（`type: module`），ncc 打包后同样输出 ESM
 - 无测试/lint/CI/格式化工具
 - 鉴权使用 `${{ github.token }}`，零配置
 - API 端點: `https://models.inference.ai.azure.com`

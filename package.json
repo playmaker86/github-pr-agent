@@ -4,7 +4,7 @@
   "description": "AI-powered code review for GitHub PRs using GitHub Models",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc --noEmit && ncc build src/index.ts -o dist"
   },
   "dependencies": {
     "@actions/core": "^3.0.1",
@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "@types/node": "^25.9.0",
+    "@vercel/ncc": "^0.38.4",
     "typescript": "^5.5.3"
   },
   "private": true,
