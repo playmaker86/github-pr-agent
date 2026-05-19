@@ -1,5 +1,5 @@
 name: 'PR Code Review'
-description: '使用 GitHub Models 对 Pull Request 进行 AI 代码审查'
+description: '使用 AI 对 Pull Request 进行代码审查（兼容 DeepSeek / OpenAI 等）'
 author: 'github-pr-agent'
 
 inputs:
@@ -7,9 +7,16 @@ inputs:
     description: 'GitHub token，默认使用 workflow 的 GITHUB_TOKEN'
     default: ${{ github.token }}
     required: false
+  api_key:
+    description: 'AI API Key（DeepSeek / OpenAI 等）'
+    required: true
+  api_base:
+    description: 'AI API 端點'
+    default: 'https://api.deepseek.com'
+    required: false
   model:
     description: '使用的 AI 模型'
-    default: 'gpt-4o-mini'
+    default: 'deepseek-v4-flash'
     required: false
 
 runs:

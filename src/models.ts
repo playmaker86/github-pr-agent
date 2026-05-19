@@ -1,7 +1,6 @@
 import OpenAI from "openai";
 import { SYSTEM_PROMPT, buildUserMessage, buildSummaryMessage } from "./prompt.js";
 
-const ENDPOINT = "https://models.inference.ai.azure.com";
 const MAX_CHARS_PER_BATCH = 15000;
 
 export interface FileReview {
@@ -9,8 +8,8 @@ export interface FileReview {
   review: string;
 }
 
-function createClient(token: string): OpenAI {
-  return new OpenAI({ baseURL: ENDPOINT, apiKey: token });
+function createClient(apiBase: string, apiKey: string): OpenAI {
+  return new OpenAI({ baseURL: apiBase, apiKey });
 }
 
 function estimateTokens(text: string): number {
@@ -22,11 +21,12 @@ function buildFileSummary(f: { filename: string; additions: number; deletions: n
 }
 
 export async function reviewFiles(
-  token: string,
+  apiBase: string,
+  apiKey: string,
   model: string,
   files: { filename: string; patch?: string; additions: number; deletions: number; changes: number }[],
 ): Promise<FileReview[]> {
-  const client = createClient(token);
+  const client = createClient(apiBase, apiKey);
   const results: FileReview[] = [];
 
   const batches: { filename: string; patch: string }[][] = [];
@@ -77,14 +77,15 @@ export async function reviewFiles(
 }
 
 export async function summarizeReviews(
-  token: string,
+  apiBase: string,
+  apiKey: string,
   model: string,
   reviews: FileReview[],
 ): Promise<string> {
   if (reviews.length === 0) return "无变更需要审查。";
   if (reviews.length === 1) return reviews[0].review;
 
-  const client = createClient(token);
+  const client = createClient(apiBase, apiKey);
   const summaryMessage = buildSummaryMessage(reviews);
 
   if (estimateTokens(summaryMessage) > 6000) {
