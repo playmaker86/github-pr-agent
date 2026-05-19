@@ -6,7 +6,9 @@ import { reviewFiles, summarizeReviews } from "./models.js";
 async function run(): Promise<void> {
   try {
     const githubToken = core.getInput("github_token") || process.env.GITHUB_TOKEN || "";
-    const model = core.getInput("model") || "gpt-4o-mini";
+    const apiKey = core.getInput("api_key", { required: true });
+    const apiBase = core.getInput("api_base") || "https://api.deepseek.com";
+    const model = core.getInput("model") || "deepseek-v4-flash";
 
     if (!githubToken) {
       core.setFailed("缺少 github_token");
@@ -34,10 +36,10 @@ async function run(): Promise<void> {
       return;
     }
 
-    const fileReviews = await reviewFiles(githubToken, model, files);
+    const fileReviews = await reviewFiles(apiBase, apiKey, model, files);
     core.info(`完成 ${fileReviews.length} 批次审查`);
 
-    const summary = await summarizeReviews(githubToken, model, fileReviews);
+    const summary = await summarizeReviews(apiBase, apiKey, model, fileReviews);
 
     const header = `## 🤖 AI 代码审查\n\n`;
     const body = header + summary;

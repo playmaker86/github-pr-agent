@@ -47023,10 +47023,9 @@ function buildSummaryMessage(fileReview) {
 ;// CONCATENATED MODULE: ./src/models.ts
 
 
-const ENDPOINT = "https://models.inference.ai.azure.com";
 const MAX_CHARS_PER_BATCH = 15000;
-function createClient(token) {
-    return new OpenAI({ baseURL: ENDPOINT, apiKey: token });
+function createClient(apiBase, apiKey) {
+    return new OpenAI({ baseURL: apiBase, apiKey });
 }
 function estimateTokens(text) {
     return Math.ceil(text.length / 3);
@@ -47034,8 +47033,8 @@ function estimateTokens(text) {
 function buildFileSummary(f) {
     return `文件 \`${f.filename}\` 变更量过大（+${f.additions}/-${f.deletions}，共 ${f.changes} 行），跳过逐行审查。请仅基于统计信息给出高层面的审查建议。`;
 }
-async function reviewFiles(token, model, files) {
-    const client = createClient(token);
+async function reviewFiles(apiBase, apiKey, model, files) {
+    const client = createClient(apiBase, apiKey);
     const results = [];
     const batches = [];
     let currentBatch = [];
@@ -47076,12 +47075,12 @@ async function reviewFiles(token, model, files) {
     }
     return results;
 }
-async function summarizeReviews(token, model, reviews) {
+async function summarizeReviews(apiBase, apiKey, model, reviews) {
     if (reviews.length === 0)
         return "无变更需要审查。";
     if (reviews.length === 1)
         return reviews[0].review;
-    const client = createClient(token);
+    const client = createClient(apiBase, apiKey);
     const summaryMessage = buildSummaryMessage(reviews);
     if (estimateTokens(summaryMessage) > 6000) {
         return reviews
@@ -47110,7 +47109,9 @@ async function summarizeReviews(token, model, reviews) {
 async function run() {
     try {
         const githubToken = getInput("github_token") || process.env.GITHUB_TOKEN || "";
-        const model = getInput("model") || "gpt-4o-mini";
+        const apiKey = getInput("api_key", { required: true });
+        const apiBase = getInput("api_base") || "https://api.deepseek.com";
+        const model = getInput("model") || "deepseek-v4-flash";
         if (!githubToken) {
             setFailed("缺少 github_token");
             return;
@@ -47130,9 +47131,9 @@ async function run() {
             info("无文件变更，跳过审查");
             return;
         }
-        const fileReviews = await reviewFiles(githubToken, model, files);
+        const fileReviews = await reviewFiles(apiBase, apiKey, model, files);
         info(`完成 ${fileReviews.length} 批次审查`);
-        const summary = await summarizeReviews(githubToken, model, fileReviews);
+        const summary = await summarizeReviews(apiBase, apiKey, model, fileReviews);
         const header = `## 🤖 AI 代码审查\n\n`;
         const body = header + summary;
         await postComment(octokit, owner, repo, pullNumber, body);
