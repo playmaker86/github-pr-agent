@@ -1,0 +1,21 @@
+name: 'PR Code Review'
+description: '使用 GitHub Models 对 Pull Request 进行 AI 代码审查'
+author: 'github-pr-agent'
+
+inputs:
+  github_token:
+    description: 'GitHub token，默认使用 workflow 的 GITHUB_TOKEN'
+    default: ${{ github.token }}
+    required: false
+  model:
+    description: '使用的 AI 模型'
+    default: 'gpt-4o-mini'
+    required: false
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
+
+branding:
+  icon: 'check-circle'
+  color: 'purple'

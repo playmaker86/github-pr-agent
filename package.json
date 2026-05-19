@@ -1,0 +1,20 @@
+{
+  "name": "github-pr-agent",
+  "version": "1.0.0",
+  "description": "AI-powered code review for GitHub PRs using GitHub Models",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@actions/core": "^3.0.1",
+    "@actions/github": "^9.1.1",
+    "@octokit/rest": "^22.0.1",
+    "openai": "^6.38.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.0",
+    "typescript": "^5.5.3"
+  },
+  "private": true
+}
