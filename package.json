@@ -1,7 +1,7 @@
 {
   "name": "github-pr-agent",
   "version": "1.0.0",
-  "description": "AI-powered code review for GitHub PRs using GitHub Models",
+  "description": "AI-powered code review for GitHub PRs using DeepSeek API",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc --noEmit && ncc build src/index.ts -o dist"
