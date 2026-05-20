@@ -24,7 +24,7 @@ PR 触发 → 获取 diff → 按文件分批审查 → 汇总 → 发布评论
 - 每批文件 diff ≤ 15000 字符，避免超过 token 限制
 - 超大文件仅发送文件名 + 变更统计摘要，不做逐行审查
 - 默认模型 `deepseek-v4-flash`，可通过 Action input 切换
-- API 端點默认 `https://api.deepseek.com`，可通过 Action input 切换（兼容 OpenAI、Groq 等）
+- API 端點默认 `https://api.deepseek.com`
 
 ## 机密信息要求
 
