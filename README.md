@@ -66,23 +66,6 @@ jobs:
 | `model` | | `deepseek-v4-flash` | 使用的 AI 模型 |
 | `github_token` | | `${{ github.token }}` | GitHub Token（用于获取 PR diff 和发布评论）|
 
-### 使用其他 AI 服务
-
-```yaml
-- uses: playmaker86/github-pr-agent@main
-  with:
-    api_key: ${{ secrets.API_KEY }}
-    api_base: https://api.openai.com/v1      # OpenAI
-    model: gpt-4o-mini
-```
-
-```yaml
-- uses: playmaker86/github-pr-agent@main
-  with:
-    api_key: ${{ secrets.GROQ_API_KEY }}
-    api_base: https://api.groq.com/openai/v1  # Groq
-    model: llama-3.3-70b-versatile
-```
 
 ## Commit Status 说明
 
