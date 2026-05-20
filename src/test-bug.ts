@@ -1,7 +1,6 @@
 function divide(a: number, b: number) {
+    if (b === 0) {
+        return 0;
+    }
     return a / b;
-}
-
-function show(a: number, b: number) {
-    console.log(a + b)
 }
