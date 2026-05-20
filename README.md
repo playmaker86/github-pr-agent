@@ -58,8 +58,11 @@ jobs:
 3. **Ruleset name**: 自定义名称，如 `PR Review Check`
 4. **Target branches**: 点 **Add a target** → 选择 **Include default branch**
 5. **Branch protections**: 勾选 ✅ **Require status checks to pass**
-6. 输入框中填入 `PR Code Review`，点 **+** 添加
-7. 点 **Create** 保存
+6. 在输入框中填入 `PR Code Review`，点 **+** 添加
+7. 确保 **Enforcement status** 为 **Active**
+8. 点 **Create** 保存
+
+> **提示**：如果 Rulesets 界面找不到上述选项，也可用旧的 **Settings → Branches → Add rule** 界面，效果相同。
 
 > **效果**：审查未完成或发现问题时，PR 合并按钮灰掉，禁止合并。
 
