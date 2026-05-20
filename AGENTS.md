@@ -11,7 +11,7 @@ GitHub Action，使用 DeepSeek API（或任何 OpenAI 兼容 API）对 Pull Req
 ## 结构
 
 - `src/index.ts` — Action 入口，编排整个审查流程
-- `src/github.ts` — GitHub API 封装（获取 PR diff、发布评论）
+- `src/github.ts` — GitHub API 封装（获取 PR diff、发布评论、设置 commit status）
 - `src/models.ts` — AI API 调用（分块审查 + 汇总），使用 `openai` SDK
 - `src/prompt.ts` — 中文审查提示词模板
 
@@ -36,4 +36,6 @@ PR 触发 → 获取 diff → 按文件分批审查 → 汇总 → 发布评论
 
 - `dist/` 必须提交到仓库（GitHub Action 入口），不要加入 .gitignore。 `dist/` 由 ncc 生成，是包含所有依赖的自包含单文件
 - 项目使用 ESM（`type: module`），ncc 打包后同样输出 ESM
+- Action runner 使用 `node24`
 - 无测试/lint/CI/格式化工具
+- workflow 需 `statuses: write` 权限（用于设置 commit status）
