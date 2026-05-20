@@ -33,6 +33,11 @@ on:
   pull_request:
     types: [opened, synchronize]
 
+permissions:
+  contents: read
+  pull-requests: write
+  statuses: write
+
 jobs:
   review:
     runs-on: ubuntu-latest
@@ -46,14 +51,15 @@ jobs:
 
 ### 4. 配置分支保护（可选）
 
-如果希望**审查不通过时禁止合并 PR**，还需配置分支保护规则：
+如果希望**审查不通过时禁止合并 PR**，还需配置 Rulesets：
 
-1. 打开仓库 **Settings** → **Branches**
-2. 点击 **Add branch protection rule**
-3. **Branch name pattern** 填写目标分支名，如 `main`
-4. 勾选 ✅ **Require status checks to pass before merging**
-5. 在搜索框中输入 `PR Code Review`，勾选出现的结果
-6. 点击 **Create** 保存
+1. 先让 workflow 成功运行一次（例如开一个 PR），这会在 GitHub 系统中创建 `PR Code Review` 状态检查
+2. 打开仓库 **Settings** → **Rules** → **Rulesets** → **New ruleset** → **New branch ruleset**
+3. **Ruleset name**: 自定义名称，如 `PR Review Check`
+4. **Target branches**: 点 **Add a target** → 选择 **Include default branch**
+5. **Branch protections**: 勾选 ✅ **Require status checks to pass**
+6. 输入框中填入 `PR Code Review`，点 **+** 添加
+7. 点 **Create** 保存
 
 > **效果**：审查未完成或发现问题时，PR 合并按钮灰掉，禁止合并。
 
