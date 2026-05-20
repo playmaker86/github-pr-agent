@@ -55,16 +55,26 @@ jobs:
 
 1. 先让 workflow 成功运行一次（例如开一个 PR），这会在 GitHub 系统中创建 `PR Code Review` 状态检查
 2. 打开仓库 **Settings** → **Rules** → **Rulesets** → **New ruleset** → **New branch ruleset**
+
+   ![Rulesets 入口](docs/rulesets-entry.png)
+
 3. **Ruleset name**: 自定义名称，如 `PR Review Check`
 4. **Target branches**: 点 **Add a target** → 选择 **Include default branch**
 5. **Branch protections**: 勾选 ✅ **Require status checks to pass**
 6. 在输入框中填入 `PR Code Review`，点 **+** 添加
+
+   ![Require status checks](docs/require-status-checks.png)
+
 7. 确保 **Enforcement status** 为 **Active**
 8. 点 **Create** 保存
 
 > **提示**：如果 Rulesets 界面找不到上述选项，也可用旧的 **Settings → Branches → Add rule** 界面，效果相同。
 
 > **效果**：审查未完成或发现问题时，PR 合并按钮灰掉，禁止合并。
+
+> **注意**：为防止管理员被自己设置的规则拦截，建议在 **Bypass list** 中添加你的角色（如 Repository admin），并选择 **Always allow**。
+
+![Bypass list](docs/bypass-list.png)
 
 ## Inputs
 
