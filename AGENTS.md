@@ -1,6 +1,6 @@
 # github-pr-agent
 
-GitHub Action，使用 DeepSeek API（或任何 OpenAI 兼容 API）对 Pull Request 进行 AI 代码审查。
+GitHub Action，使用 DeepSeek API 对 Pull Request 进行 AI 代码审查。
 
 ## 命令
 
@@ -30,7 +30,6 @@ PR 触发 → 获取 diff → 按文件分批审查 → 汇总 → 发布评论
 
 - `github_token`：默认 `${{ github.token }}`，用于 GitHub API（获取 PR diff、发布评论）
 - `api_key`：DeepSeek API Key，需用户在 repo secrets 中配置
-- `api_base`：可选，默认 DeepSeek，可按需切换其他 OpenAI 兼容端點
 
 ## 注意
 

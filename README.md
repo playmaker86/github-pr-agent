@@ -1,11 +1,11 @@
 # 🤖 github-pr-agent
 
-GitHub Action，使用 AI 对 Pull Request 进行代码审查，发现问题后禁止合并。
+GitHub Action，使用 DeepSeek API 对 Pull Request 进行 AI 代码审查，发现问题后禁止合并。
 
 ## 功能
 
 - PR 创建或更新时自动触发审查
-- 使用 AI（DeepSeek / OpenAI 等）检测代码质量和潜在 Bug
+- 使用 DeepSeek API 检测代码质量和潜在 Bug
 - 审查结果以 PR 评论形式发布
 - 发现代码问题自动禁止合并（通过 Commit Status Check）
 
@@ -80,8 +80,7 @@ jobs:
 
 | 参数 | 必填 | 默认值 | 说明 |
 |------|------|--------|------|
-| `api_key` | ✅ | — | AI API Key（DeepSeek / OpenAI 等）|
-| `api_base` | | `https://api.deepseek.com` | AI API 端點，可切换其他 OpenAI 兼容服务 |
+| `api_key` | ✅ | — | DeepSeek API Key |
 | `model` | | `deepseek-v4-flash` | 使用的 AI 模型 |
 | `github_token` | | `${{ github.token }}` | GitHub Token（用于获取 PR diff 和发布评论）|
 

@@ -2,14 +2,15 @@ import OpenAI from "openai";
 import { SYSTEM_PROMPT, buildUserMessage, buildSummaryMessage } from "./prompt.js";
 
 const MAX_CHARS_PER_BATCH = 15000;
+const DEEPSEEK_ENDPOINT = "https://api.deepseek.com";
 
 export interface FileReview {
   filename: string;
   review: string;
 }
 
-function createClient(apiBase: string, apiKey: string): OpenAI {
-  return new OpenAI({ baseURL: apiBase, apiKey });
+function createClient(apiKey: string): OpenAI {
+  return new OpenAI({ baseURL: DEEPSEEK_ENDPOINT, apiKey });
 }
 
 function estimateTokens(text: string): number {
@@ -21,12 +22,11 @@ function buildFileSummary(f: { filename: string; additions: number; deletions: n
 }
 
 export async function reviewFiles(
-  apiBase: string,
   apiKey: string,
   model: string,
   files: { filename: string; patch?: string; additions: number; deletions: number; changes: number }[],
 ): Promise<FileReview[]> {
-  const client = createClient(apiBase, apiKey);
+  const client = createClient(apiKey);
   const results: FileReview[] = [];
 
   const batches: { filename: string; patch: string }[][] = [];
@@ -77,7 +77,6 @@ export async function reviewFiles(
 }
 
 export async function summarizeReviews(
-  apiBase: string,
   apiKey: string,
   model: string,
   reviews: FileReview[],
@@ -85,7 +84,7 @@ export async function summarizeReviews(
   if (reviews.length === 0) return "无变更需要审查。";
   if (reviews.length === 1) return reviews[0].review;
 
-  const client = createClient(apiBase, apiKey);
+  const client = createClient(apiKey);
   const summaryMessage = buildSummaryMessage(reviews);
 
   if (estimateTokens(summaryMessage) > 6000) {
