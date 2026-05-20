@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: playmaker86/github-pr-agent@main
+      - uses: playmaker86/github-pr-agent@v1
         with:
           api_key: ${{ secrets.DEEPSEEK_API_KEY }}
           model: deepseek-v4-flash
