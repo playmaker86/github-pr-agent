@@ -49,3 +49,21 @@ export async function postComment(
     body,
   });
 }
+
+export async function setCommitStatus(
+  octokit: ReturnType<typeof github.getOctokit>,
+  owner: string,
+  repo: string,
+  sha: string,
+  state: "pending" | "success" | "failure" | "error",
+  description: string,
+): Promise<void> {
+  await octokit.rest.repos.createCommitStatus({
+    owner,
+    repo,
+    sha,
+    context: "PR Code Review",
+    state,
+    description,
+  });
+}

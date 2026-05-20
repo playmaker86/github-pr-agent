@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
-import { getPRFiles, postComment } from "./github.js";
+import { getPRFiles, postComment, setCommitStatus } from "./github.js";
 import { reviewFiles, summarizeReviews } from "./models.js";
 
 async function run(): Promise<void> {
@@ -28,11 +28,17 @@ async function run(): Promise<void> {
 
     const octokit = github.getOctokit(githubToken);
 
+    const pr = await octokit.rest.pulls.get({ owner, repo, pull_number: pullNumber });
+    const headSha = pr.data.head.sha;
+
+    await setCommitStatus(octokit, owner, repo, headSha, "pending", "AI 代码审查进行中...");
+
     const files = await getPRFiles(octokit, owner, repo, pullNumber);
     core.info(`获取到 ${files.length} 个变更文件`);
 
     if (files.length === 0) {
       core.info("无文件变更，跳过审查");
+      await setCommitStatus(octokit, owner, repo, headSha, "success", "无文件变更");
       return;
     }
 
@@ -46,9 +52,30 @@ async function run(): Promise<void> {
 
     await postComment(octokit, owner, repo, pullNumber, body);
     core.info("审查评论已发布");
+
+    const passed = /未发现明显问题/.test(summary) || /✅/.test(summary);
+    await setCommitStatus(
+      octokit, owner, repo, headSha,
+      passed ? "success" : "failure",
+      passed ? "未发现明显问题" : "发现代码问题",
+    );
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     core.setFailed(`审查失败: ${msg}`);
+
+    const githubToken = core.getInput("github_token") || process.env.GITHUB_TOKEN || "";
+    if (githubToken) {
+      try {
+        const octokit = github.getOctokit(githubToken);
+        const owner = github.context.repo.owner;
+        const repo = github.context.repo.repo;
+        const pullNumber = github.context.payload.pull_request?.number;
+        if (pullNumber) {
+          const pr = await octokit.rest.pulls.get({ owner, repo, pull_number: pullNumber });
+          await setCommitStatus(octokit, owner, repo, pr.data.head.sha, "error", `审查失败: ${msg}`);
+        }
+      } catch { /* 状态上报失败不影响主流程 */ }
+    }
   }
 }
 

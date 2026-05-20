@@ -36280,6 +36280,16 @@ async function postComment(octokit, owner, repo, pullNumber, body) {
         body,
     });
 }
+async function setCommitStatus(octokit, owner, repo, sha, state, description) {
+    await octokit.rest.repos.createCommitStatus({
+        owner,
+        repo,
+        sha,
+        context: "PR Code Review",
+        state,
+        description,
+    });
+}
 
 ;// CONCATENATED MODULE: ./node_modules/openai/internal/tslib.mjs
 function __classPrivateFieldSet(receiver, state, value, kind, f) {
@@ -47125,10 +47135,14 @@ async function run() {
         }
         info(`正在审查 PR #${pullNumber} (${owner}/${repo})，模型: ${model}`);
         const octokit = getOctokit(githubToken);
+        const pr = await octokit.rest.pulls.get({ owner, repo, pull_number: pullNumber });
+        const headSha = pr.data.head.sha;
+        await setCommitStatus(octokit, owner, repo, headSha, "pending", "AI 代码审查进行中...");
         const files = await getPRFiles(octokit, owner, repo, pullNumber);
         info(`获取到 ${files.length} 个变更文件`);
         if (files.length === 0) {
             info("无文件变更，跳过审查");
+            await setCommitStatus(octokit, owner, repo, headSha, "success", "无文件变更");
             return;
         }
         const fileReviews = await reviewFiles(apiBase, apiKey, model, files);
@@ -47138,10 +47152,26 @@ async function run() {
         const body = header + summary;
         await postComment(octokit, owner, repo, pullNumber, body);
         info("审查评论已发布");
+        const passed = /未发现明显问题/.test(summary) || /✅/.test(summary);
+        await setCommitStatus(octokit, owner, repo, headSha, passed ? "success" : "failure", passed ? "未发现明显问题" : "发现代码问题");
     }
     catch (error) {
         const msg = error instanceof Error ? error.message : String(error);
         setFailed(`审查失败: ${msg}`);
+        const githubToken = getInput("github_token") || process.env.GITHUB_TOKEN || "";
+        if (githubToken) {
+            try {
+                const octokit = getOctokit(githubToken);
+                const owner = github_context.repo.owner;
+                const repo = github_context.repo.repo;
+                const pullNumber = github_context.payload.pull_request?.number;
+                if (pullNumber) {
+                    const pr = await octokit.rest.pulls.get({ owner, repo, pull_number: pullNumber });
+                    await setCommitStatus(octokit, owner, repo, pr.data.head.sha, "error", `审查失败: ${msg}`);
+                }
+            }
+            catch { /* 状态上报失败不影响主流程 */ }
+        }
     }
 }
 run();
